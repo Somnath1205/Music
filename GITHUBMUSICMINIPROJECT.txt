@@ -1,0 +1,338 @@
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+class Music {
+public:
+    virtual void playMusic() = 0;
+
+    void setSongName(const string& name) {
+        songName = name;
+    }
+
+    const string& getSongName() const {
+        return songName;
+    }
+
+private:
+    string songName;
+};
+
+void readSongsFromFile(const string& filename, vector<string>& songList) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        throw runtime_error("Error opening file: " + filename);
+    }
+
+    string line;
+    while (getline(file, line)) {
+        songList.push_back(line);
+    }
+
+    file.close();
+}
+
+class SadSongs : public Music {
+public:
+    SadSongs() {
+        readSongsFromFile("SadSongs.txt", sadSongList);
+    }
+
+    void playMusic() override {
+        cout << "Playing SAD song " << getSongName() << " by Arijit Singh" << endl;
+    }
+
+    void printSadSongs() {
+        cout << "List of Sad Songs:" << endl;
+        for (const auto& song : sadSongList) {
+            cout << "- " << song << endl;
+        }
+    }
+
+    const string& getSadSong(int index) const {
+        return sadSongList[index];
+    }
+
+private:
+    vector<string> sadSongList;
+};
+
+class WeddingSongs : public Music {
+public:
+    WeddingSongs() {
+        readSongsFromFile("WeddingSongs.txt", weddingSongList);
+    }
+
+    void playMusic() override {
+        cout << "Playing WEDDING song " << getSongName() << endl;
+    }
+
+    void printWeddingSongs() {
+        cout << "List of Wedding Songs:" << endl;
+        for (const auto& song : weddingSongList) {
+            cout << "- " << song << endl;
+        }
+    }
+
+private:
+    vector<string> weddingSongList;
+};
+
+class ArijitSinghSongs : public Music {
+public:
+    ArijitSinghSongs() {
+        readSongsFromFile("ArijitSinghSongs.txt", arijitSinghSongList);
+    }
+
+    void playMusic() override {
+        cout << "Playing song " << getSongName() << " by Arijit Singh" << endl;
+    }
+
+    void printArijitSinghSongs() {
+        cout << "List of Arijit Singh Songs:" << endl;
+        for (const auto& song : arijitSinghSongList) {
+            cout << "- " << song << endl;
+        }
+    }
+
+private:
+    vector<string> arijitSinghSongList;
+};
+
+class PartySongs : public Music {
+public:
+    PartySongs() {
+        readSongsFromFile("PartySongs.txt", partySongList);
+    }
+
+    void playMusic() override {
+        cout << "Playing PARTY song " << getSongName() << endl;
+    }
+
+    void printPartySongs() {
+        cout << "List of Party Songs:" << endl;
+        for (const auto& song : partySongList) {
+            cout << "- " << song << endl;
+        }
+    }
+
+    const string& getPartySong(int index) const {
+        return partySongList[index];
+    }
+
+private:
+    vector<string> partySongList;
+};
+
+// Add lyrics for each song (replace these with actual lyrics)
+const string TUM_HI_HO_LYRICS = R"(
+    Hum tere bin ab reh nahi sakte,
+    Tere bina kya wajood mera?
+    Tujhse juda gar ho jaayenge,
+    Toh khud se hi ho jaayenge judaa.
+)";
+
+const string CHANNA_MEREYA_LYRICS = R"(
+    Accha chalta hoon,
+    Duaaon mein yaad rakhna,
+    Mere zikr ka zubaan pe swaad rakhna.
+)";
+
+const string PARTY_TOH_BANTI_HAI_LYRICS = R"(
+    Party toh banti hai,
+    Party toh banti hai.
+)";
+
+const string TERA_BAN_JAUNGA_LYRICS = R"(
+    Tera ban jaunga,
+    Tera ban jaunga.
+)";
+
+const string UDD_GAYE_LYRICS = R"(
+    Oh mundeyaan de kill switch bhi on kar de,
+    Seedha saadha bhola bhaala man,
+    Mera muskurata chehra dekho,
+    Arey seedha saadha bhola bhaala man,
+    Mera muskurata chehra dekho.
+)";
+
+int main() {
+    try {
+        srand(static_cast<unsigned int>(time(nullptr)));
+
+        cout << "Select a song from the list:" << endl;
+        cout << "1. Tum Hi Ho\n2. Channa Mereya\n3. Party Toh Banti Hai\n4. Tera Ban Jaunga\n5. Udd Gaye\n";
+
+        int songChoice;
+        cin >> songChoice;
+
+        if (cin.fail()) {
+            throw runtime_error("Invalid input. Please enter a valid number.");
+        }
+
+        Music* music = nullptr;
+
+switch (songChoice) {
+            case 1:
+                music = new SadSongs();
+                music->setSongName("Tum Hi Ho");
+                break;
+            case 2:
+                music = new WeddingSongs();
+                music->setSongName("Channa Mereya");
+                break;
+            case 3:
+                {
+                    PartySongs partySongs;
+                    partySongs.setSongName("Party Toh Banti Hai");
+                    music = &partySongs;
+                }
+                break;
+            // Add cases for other songs if needed
+
+            default:
+                throw runtime_error("Invalid song selection!");
+        }
+
+        if (music != nullptr) {
+            music->playMusic();
+
+            cout << "Do you want the lyrics for the song? (yes/no): ";
+            string lyricsChoice;
+            cin >> lyricsChoice;
+
+            if (lyricsChoice == "yes") {
+                // Display lyrics based on the selected song
+                cout << "Lyrics for " << music->getSongName() << ":" << endl;
+                cout << "------------------------------------" << endl;
+
+                if (music->getSongName() == "Tum Hi Ho") {
+                    cout << TUM_HI_HO_LYRICS;
+                } else if (music->getSongName() == "Channa Mereya") {
+                    cout << CHANNA_MEREYA_LYRICS;
+                } else if (music->getSongName() == "Party Toh Banti Hai") {
+                    cout << PARTY_TOH_BANTI_HAI_LYRICS;
+                } else if (music->getSongName() == "Tera Ban Jaunga") {
+                    cout << TERA_BAN_JAUNGA_LYRICS;
+                } else if (music->getSongName() == "Udd Gaye") {
+                    cout << UDD_GAYE_LYRICS;
+                }
+
+                cout << "------------------------------------" << endl;
+
+                cout << "Do you want to play songs by mood or by artist? (mood/artist): ";
+                string choice;
+                cin >> choice;
+
+                if (cin.fail()) {
+                    throw runtime_error("Invalid input. Please enter 'mood' or 'artist'.");
+                }
+
+                int songCount = 0;
+
+                if (choice == "mood" && dynamic_cast<SadSongs*>(music)) {
+                    SadSongs* sadSongs = dynamic_cast<SadSongs*>(music);
+                    sadSongs->printSadSongs();
+
+                    string playChoice;
+                    do {
+                        cout << "Enter the number of the song you want to play (1-5), type 'quit' to exit, or type 'list' to display the list again: ";
+                        cin >> playChoice;
+
+                        if (playChoice == "quit") {
+                            break;
+                        } else if (playChoice == "list") {
+                            sadSongs->printSadSongs();
+                            continue;
+                        }
+
+                        int index = stoi(playChoice);
+                        if (index >= 1 && index <= 5) {
+                            sadSongs->setSongName(sadSongs->getSadSong(index - 1));
+                            sadSongs->playMusic();
+                            ++songCount;
+                        } else {
+                            cout << "Invalid song selection. Please enter a number between 1 and 5." << endl;
+                        }
+                    } while (true);
+
+                    cout << "Song-wise count:" << endl;
+                    cout << sadSongs->getSongName() << ": " << songCount << " times" << endl;
+                } else if (choice == "artist" && dynamic_cast<SadSongs*>(music)) {
+                    ArijitSinghSongs arijitSingh;
+                    arijitSingh.playMusic();
+                    arijitSingh.printArijitSinghSongs();
+                    ++songCount;
+                } else if (WeddingSongs* weddingSongs = dynamic_cast<WeddingSongs*>(music)) {
+                    weddingSongs->printWeddingSongs();
+                    ++songCount;
+
+// Additional logic to handle artist selection after playing "Channa Mereya"
+                    cout << "Do you want to play songs by mood or by artist? (mood/artist): ";
+                    cin >> choice;
+
+                    if (cin.fail()) {
+                        throw runtime_error("Invalid input. Please enter 'mood' or 'artist'.");
+                    }
+
+                    if (choice == "artist") {
+                        ArijitSinghSongs arijitSingh;
+                        arijitSingh.playMusic();
+                        arijitSingh.printArijitSinghSongs();
+                        ++songCount;
+                    }
+                } else if (PartySongs* partySongs = dynamic_cast<PartySongs*>(music)) {
+                    partySongs->printPartySongs();
+
+                    string playChoice;
+                    do {
+                        cout << "Enter the number of the song you want to play (1-3), type 'quit' to exit, or type 'list' to display the list again: ";
+                        cin >> playChoice;
+
+                        if (playChoice == "quit") {
+                            break;
+                        } else if (playChoice == "list") {
+                            partySongs->printPartySongs();
+                            continue;
+                        }
+
+                        int index = stoi(playChoice);
+                        if (index >= 1 && index <= 3) {
+                            partySongs->setSongName(partySongs->getPartySong(index - 1));
+                            partySongs->playMusic();
+                            ++songCount;
+                        } else {
+                            cout << "Invalid song selection. Please enter a number between 1 and 3." << endl;
+                        }
+                    } while (true);
+
+                    cout << "Song-wise count:" << endl;
+                    cout << partySongs->getSongName() << ": " << songCount << " times" << endl;
+                } else if (SadSongs* sadSongs = dynamic_cast<SadSongs*>(music)) {
+                    sadSongs->printSadSongs();
+                    ++songCount;
+                } else if (ArijitSinghSongs* arijitSinghSongs = dynamic_cast<ArijitSinghSongs*>(music)) {
+                    arijitSinghSongs->printArijitSinghSongs();
+                    ++songCount;
+                }
+
+                cout << "You listened to " << songCount << " songs." << endl;
+            } else {
+                cout << "You chose not to view lyrics. Exiting program." << endl;
+            }
+
+            delete music;
+        }
+    } catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
+
+    return 0;
+}
